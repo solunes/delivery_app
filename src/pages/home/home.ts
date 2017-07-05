@@ -22,6 +22,7 @@ export class HomePage {
 
   map: GoogleMap
   delivery_position: Marker
+  label: number = 0
 
   constructor(public navCtrl: NavController,
     private location: LocationTracker,
@@ -29,8 +30,10 @@ export class HomePage {
     private googleMaps: GoogleMaps) {
 
     this.location.getResult().subscribe(data => {
+      this.label++
+      this.delivery_position.setTitle(this.label.toString())
       this.delivery_position.setPosition(new LatLng(data.latitude,data.longitude))
-      this.addMarker(data)
+      //this.addMarker(data)
       this.loading.presentToast('new position ' + JSON.stringify(data))
       console.log(JSON.stringify(data))
     })
