@@ -57,7 +57,7 @@ export class LocationTracker {
     }
    
     this.backgroundGeolocation.configure(config).subscribe((location) => {
-      //this.sendPosition(location.latitude, location.longitude,location.accuracy, 'check', user_id, uuid)
+      this.sendPosition(location.latitude, location.longitude,location.accuracy)
       this.subjectResult.next(location)
       console.log('next')
       console.log(JSON.stringify(location))
@@ -66,12 +66,11 @@ export class LocationTracker {
     this.backgroundGeolocation.start()
   }
 
-  sendPosition(lat, lng, acc, action:string, user_id, uuid){
-    let endpoint = AppSettings.checkLocation(user_id, action, lat, lng, acc, uuid)
+  sendPosition(lat, lng, acy){
+    let endpoint = AppSettings.updateLocation(lat, lng, acy)
     this.http.getRequest(endpoint).subscribe(result => {
-      console.log('next')
-      this.subjectResult.next(result)
-      this.loading.dismiss()
+      console.log('result')
+      console.log(JSON.stringify(result))
     }, error => this.loading.showError(error))
   }
 

@@ -31,7 +31,7 @@ export class AuthService {
       let body = new FormData();
       body.append('email', credentials.email);
       body.append('password', credentials.password);
-      return this.http.post(AppSettings.api_url + '-auth/authenticate', body)
+      return this.http.post(AppSettings.api_url + AppSettings.endpoints.auth, body)
           .timeout(this.timeout_page).map(res => res.json());
     }
   }

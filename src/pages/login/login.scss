@@ -1,0 +1,14 @@
+page-login {
+	.theme-Spa .subcontent { background: #fff; }
+	.theme-Spazio .subcontent { background: #fff; }
+	h2 { text-align: center; color: map-get($colors, secondary); }
+    .login-content{
+        background: map-get($colors, primary);
+    }
+    .register-content{
+        margin-top: 10px !important;
+    }
+    .label-md { color: #777; }
+    h3 { color: #777; margin-bottom: 5px; padding-left: 10px; }
+    p { padding: 10px; text-align: justify; margin-top: 0; margin-bottom: 10px; padding-top: 0; padding-bottom: 0; color: #777; }
+}

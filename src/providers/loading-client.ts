@@ -46,7 +46,7 @@ export class LoadingClient {
       showCloseButton: false,
       closeButtonText: 'OK'
     });
-    //toast.present();
+    toast.present();
   }
 
   presentToast(text) {

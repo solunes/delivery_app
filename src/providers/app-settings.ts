@@ -3,21 +3,18 @@ import 'rxjs/add/operator/map';
 
 @Injectable()
 export class AppSettings {
-  static api_url: string = 'http://asistencia.solunes.com/api'
+  static api_url: string = 'http://delivery.solunes.com/api'
   static schedules_key: string = 'schedules'
   static endpoints = {
     home: '/check-location',
     auth: '-auth/authenticate',
+    update_location: '/update-location/'
   }
   static status_key: string = 'status'
 
   constructor() {}
 
-  static checkLocation(user_id, action, lat, lng, accuracy, uuid=''): string{
-    let ibeacon_query = ''
-    if (uuid) {
-       ibeacon_query = '/' + uuid
-    }
-    return '/check-location/' + user_id + '/' + action + '/' + lat + '/' + lng + '/' + accuracy + ibeacon_query
+  static updateLocation(lat, lng, acy): string{
+    return this.endpoints.update_location + lat + '/' + lng + '/' + acy
   }
 }

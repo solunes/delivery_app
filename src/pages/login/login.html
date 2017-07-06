@@ -1,0 +1,19 @@
+<toolbar [title_page]='title_page'></toolbar>
+
+<ion-content padding>
+  <div class="subcontent" style="margin-top: 100px;">
+    <form (ngSubmit)="login()" #registerForm="ngForm">
+      <ion-item>
+        <ion-label floating>Email</ion-label>
+        <ion-input type="email" name="email" [(ngModel)]="loginCredentials.email" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label floating>Password</ion-label>
+        <ion-input type="password" name="password" [(ngModel)]="loginCredentials.password" required></ion-input>
+      </ion-item>
+
+      <button class="submit-btn" ion-button full type="submit" [disabled]="!registerForm.form.valid">Login</button>
+    </form>
+  </div>
+</ion-content>

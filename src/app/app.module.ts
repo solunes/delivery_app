@@ -10,7 +10,11 @@ import { IonicStorageModule } from '@ionic/storage';
 import { HttpModule } from '@angular/http';
 
 import { MyApp } from './app.component';
+import { ToolbarComponent } from './toolbar.component';
+
 import { HomePage } from '../pages/home/home';
+import { LoginPage } from '../pages/login/login';
+
 import { LocationTracker } from '../providers/location-tracker';
 import { AppSettings } from '../providers/app-settings';
 import { AuthService } from '../providers/auth-service';
@@ -20,7 +24,9 @@ import { LoadingClient } from '../providers/loading-client';
 @NgModule({
   declarations: [
     MyApp,
-    HomePage
+    ToolbarComponent,
+    HomePage,
+    LoginPage,
   ],
   imports: [
     HttpModule,
@@ -31,7 +37,9 @@ import { LoadingClient } from '../providers/loading-client';
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    HomePage
+    ToolbarComponent,
+    HomePage,
+    LoginPage,
   ], 
   providers: [
     StatusBar,

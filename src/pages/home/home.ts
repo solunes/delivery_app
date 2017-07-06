@@ -1,6 +1,7 @@
 import { Component } from '@angular/core'
 import { NavController } from 'ionic-angular'
 import { Geoposition } from '@ionic-native/geolocation';
+import { Storage } from '@ionic/storage'
 import {
  GoogleMaps,
  GoogleMap,
@@ -13,6 +14,8 @@ import {
 
 import { LocationTracker } from '../../providers/location-tracker'
 import { LoadingClient } from '../../providers/loading-client'
+import { AuthService } from '../../providers/auth-service'
+import { AppSettings } from '../../providers/app-settings'
 
 @Component({
   selector: 'page-home',
@@ -20,57 +23,28 @@ import { LoadingClient } from '../../providers/loading-client'
 })
 export class HomePage {
 
+  title_page = 'Home'
   map: GoogleMap
   delivery_position: Marker
   label: number = 0
+  on_background: boolean
 
   constructor(public navCtrl: NavController,
     private location: LocationTracker,
+    private storage: Storage,
     private loading: LoadingClient, 
     private googleMaps: GoogleMaps) {
 
     this.location.getResult().subscribe(data => {
-      this.label++
-      this.delivery_position.setTitle(this.label.toString())
-      this.delivery_position.setPosition(new LatLng(data.latitude,data.longitude))
-      //this.addMarker(data)
-      this.loading.presentToast('new position ' + JSON.stringify(data))
-      console.log(JSON.stringify(data))
+      this.loading.dismiss()
+      this.addMarker(data.latitude, data.longitude)
     })
 
     this.location.getCurrentObservable().subscribe((value:Geoposition) => {
-      
-      console.log('getCurrentObservable')
-      let ionic: LatLng = new LatLng(value.coords.latitude,value.coords.longitude)
-
-      // create CameraPosition
-      let position: CameraPosition = {
-        target: ionic,
-        zoom: 18,
-        tilt: 30
-      }
-
-      // move the map's camera to position
-      this.map.moveCamera(position)
-
-      // create new marker
-      let markerOptions: MarkerOptions = {
-        position: ionic,
-        title: 'Ionic'
-      }
-
-      this.map.addMarker(markerOptions).then((marker: Marker) => {
-        console.log('first marker')
-        this.delivery_position = marker
-        this.location.backgroundTracking()
-      })
+      this.addMarker(value.coords.latitude, value.coords.longitude)
     })
 
   }
-
-  ngAfterViewInit() {
-  }
-
 
   ionViewWillEnter(){
     console.log('view init')
@@ -91,28 +65,41 @@ export class HomePage {
     })
   }
 
-  addMarker(data){
-    let ionic: LatLng = new LatLng(data.latitude, data.longitude)
-    console.log('new position')
-    console.log(ionic.toString())
+  addMarker(lat, lng){
+    let latLng: LatLng = new LatLng(lat, lng)
 
     let position: CameraPosition = {
-      target: ionic,
+      target: latLng,
       zoom: 18,
       tilt: 30
     }
-    this.map.moveCamera(position)
-
     let markerOptions: MarkerOptions = {
-      position: ionic,
+      position: latLng,
       title: 'current position'
     }
 
-    console.log('addMarker')
-    this.map.addMarker(markerOptions).then((marker: Marker) => {
-        this.delivery_position = marker
-        this.delivery_position.showInfoWindow()
-        console.log('new marker')
-      })
+    this.map.moveCamera(position)
+    if (!this.delivery_position) {
+      this.map.addMarker(markerOptions).then((marker: Marker) => {
+          this.delivery_position = marker
+          this.delivery_position.showInfoWindow()
+        })
+    } else {
+      this.label++
+      this.delivery_position.setTitle(this.label.toString())
+      this.delivery_position.showInfoWindow()
+      this.delivery_position.setPosition(latLng)
+    }
+  }
+
+  init(){
+    this.on_background = true
+    this.loading.showLoading(true)
+    this.location.backgroundTracking()
+  }
+
+  finish(){
+    this.on_background = false
+    this.location.stopBackgroundTracking()
   }
 }

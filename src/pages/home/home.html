@@ -1,11 +1,7 @@
-<ion-header>
-  <ion-navbar>
-    <ion-title>
-      Ionic Blank
-    </ion-title>
-  </ion-navbar>
-</ion-header>
+<toolbar [title_page]='title_page'></toolbar>
 
-<ion-content padding>
+<ion-content padding style="margin-top: 60px;">
+  <button [disabled]="on_background" (click)="init()" ion-button>Iniciar</button>
+  <button [disabled]="!on_background" (click)="finish()" ion-button color="danger">Terminar</button>
   <div #map id="map" style="height:100%;"></div>
 </ion-content>
