@@ -58,6 +58,7 @@ export class LoginPage {
     this.storage.set(AuthService.login_key, true)
     this.storage.set(AuthService.token_key, data[AuthService.token_key])
     this.storage.set(AuthService.expiration_date_key, data[AuthService.expiration_date_key])
+    this.storage.set(AppSettings.deliveries_key, data[AppSettings.deliveries_key])
     this.nav.setRoot(HomePage)
   }
 }

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { ToastController, LoadingController, Loading } from 'ionic-angular';
-import 'rxjs/add/operator/map';
 
 /*
   Generated class for the LoadingClient provider.
@@ -43,8 +42,6 @@ export class LoadingClient {
     const toast = this.toastCtrl.create({
       message: text,
             duration: 3000,
-      showCloseButton: false,
-      closeButtonText: 'OK'
     });
     toast.present();
   }

@@ -2,7 +2,6 @@ import { Injectable, NgZone } from '@angular/core'
 import { BackgroundGeolocation } from '@ionic-native/background-geolocation'
 import { Geolocation, Geoposition } from '@ionic-native/geolocation'
 import { Observable, Subscription, Subject } from 'rxjs/Rx'
-import 'rxjs/add/operator/filter'
 
 import { AppSettings } from '../providers/app-settings'
 import { HttpClient } from '../providers/http-client'
@@ -26,6 +25,7 @@ export class LocationTracker {
     public http: HttpClient,
     public loading: LoadingClient,
     public backgroundGeolocation: BackgroundGeolocation) {
+    
   }
 
   getCurrentPosition(){
@@ -33,11 +33,11 @@ export class LocationTracker {
       frequency: 5000, 
       enableHighAccuracy: true
     }
+    console.log('options')
 
     this.geolocation.getCurrentPosition().then(value => {
-      this.subjectCurrent.next(value)
       console.log('getCurrentPosition')
-      console.log(JSON.stringify(value))
+      this.subjectCurrent.next(value)
     })
   }
 

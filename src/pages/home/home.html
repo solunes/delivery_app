@@ -3,5 +3,13 @@
 <ion-content padding style="margin-top: 60px;">
   <button [disabled]="on_background" (click)="init()" ion-button>Iniciar</button>
   <button [disabled]="!on_background" (click)="finish()" ion-button color="danger">Terminar</button>
-  <div #map id="map" style="height:100%;"></div>
+  <ion-slides pager (ionSlideDidChange)="slideChanged()">
+    <ion-slide *ngFor="let item of deliveries">
+      <h3>{{ item.id }} {{ item.status }}</h3>
+      <h3>{{ item.type }}</h3>
+
+    </ion-slide>
+  </ion-slides>
+  <div #map id="map" style="height:60%;background-color: red;"></div>
+  <div>{{ label_result }}</div>
 </ion-content>

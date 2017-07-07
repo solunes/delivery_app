@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import 'rxjs/add/operator/map';
 
 @Injectable()
 export class AppSettings {
   static api_url: string = 'http://delivery.solunes.com/api'
-  static schedules_key: string = 'schedules'
+  static deliveries_key: string = 'deliveries'
   static endpoints = {
     home: '/check-location',
     auth: '-auth/authenticate',

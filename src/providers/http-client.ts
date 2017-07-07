@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import { Storage } from '@ionic/storage';
 import { Observable } from 'rxjs/Rx';
-import 'rxjs/add/operator/map';
 
 import { LoadingClient } from './loading-client';
 import { AppSettings } from './app-settings';
@@ -41,6 +40,12 @@ export class HttpClient {
         .timeout(this.timeout_value)
         .map(res =>  res.json())
     });
+  }
+
+  getGoogleRequest(endpoint: string): Observable<any> {
+      return this.http.get(endpoint)
+        .timeout(this.timeout_value)
+        .map(res =>  res.json())
   }
 
   postRequest(endpoint: string, body) : Observable<any>{
