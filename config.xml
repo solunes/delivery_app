@@ -91,4 +91,5 @@
         <variable name="CONTENT_AUTHORITY" value="$PACKAGE_NAME" />
     </plugin>
     <plugin name="cordova-plugin-geolocation" spec="~2.4.3" />
+    <plugin name="mx.ferreyra.callnumber" spec="~0.0.2" />
 </widget>

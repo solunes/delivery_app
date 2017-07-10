@@ -8,6 +8,7 @@ import { BackgroundGeolocation } from '@ionic-native/background-geolocation';
 import { GoogleMaps } from '@ionic-native/google-maps'
 import { IonicStorageModule } from '@ionic/storage';
 import { HttpModule } from '@angular/http';
+import { CallNumber } from '@ionic-native/call-number'
 
 import { MyApp } from './app.component';
 import { ToolbarComponent } from './toolbar.component';
@@ -48,6 +49,7 @@ import { LoadingClient } from '../providers/loading-client';
     BackgroundGeolocation,
     LocationTracker,
     AppSettings,
+    CallNumber,
     AuthService,
     HttpClient,
     LoadingClient,

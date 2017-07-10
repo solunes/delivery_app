@@ -16,7 +16,7 @@ export class HttpClient {
       private storage: Storage,
       private loading: LoadingClient,) {}
 
-  getApiToken() : Observable<any> {
+  private getApiToken() : Observable<any> {
     return Observable.fromPromise(this.storage.get(AuthService.token_key))
   }
 

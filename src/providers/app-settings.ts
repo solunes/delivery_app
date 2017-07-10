@@ -7,7 +7,8 @@ export class AppSettings {
   static endpoints = {
     home: '/check-location',
     auth: '-auth/authenticate',
-    update_location: '/update-location/'
+    update_location: '/update-location/',
+    delivery_status: '/delivery-status/'
   }
   static status_key: string = 'status'
 
@@ -15,5 +16,9 @@ export class AppSettings {
 
   static updateLocation(lat, lng, acy): string{
     return this.endpoints.update_location + lat + '/' + lng + '/' + acy
+  }
+
+  static deliveryStatus(id_delivery, status, lat, lng){
+    return this.endpoints.delivery_status + id_delivery + '/' + status + '/' + lat + '/' + lng
   }
 }

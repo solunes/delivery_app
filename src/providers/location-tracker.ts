@@ -19,6 +19,7 @@ export class LocationTracker {
   stringTest: string 
   subjectResult = new Subject<any>() 
   subjectCurrent = new Subject<any>() 
+  subjectDeliveres = new Subject<JSON>() 
 
   constructor(public zone: NgZone,
     public geolocation: Geolocation,
@@ -60,7 +61,6 @@ export class LocationTracker {
       this.sendPosition(location.latitude, location.longitude,location.accuracy)
       this.subjectResult.next(location)
       console.log('next')
-      console.log(JSON.stringify(location))
     }, (err) => console.log(err))
     
     this.backgroundGeolocation.start()
@@ -71,17 +71,20 @@ export class LocationTracker {
     this.http.getRequest(endpoint).subscribe(result => {
       console.log('result')
       console.log(JSON.stringify(result))
+      this.subjectDeliveres.next(result)
     }, error => this.loading.showError(error))
   }
 
   getResult(): Observable<any>{
-    console.log('get result')
     return this.subjectResult.asObservable()
   }
 
   getCurrentObservable(): Observable<any>{
-    console.log('get result')
     return this.subjectCurrent.asObservable()
+  }
+
+  getDeliveres(): Observable<any>{
+    return this.subjectDeliveres.asObservable()
   }
 
   stopBackgroundTracking() {
