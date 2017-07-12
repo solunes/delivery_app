@@ -62,6 +62,7 @@ export class HomePage {
 
     this.location.getResult().subscribe(data => {
       this.loading.dismiss()
+      // marker del usuario
       this.addUserMarker(data.latitude, data.longitude, 'posicion actual')
       this.showWayRoutes(data, this.deliveries[this.slides.getActiveIndex()], true)
     })
@@ -69,8 +70,10 @@ export class HomePage {
     this.location.getCurrentObservable().subscribe((value:Geoposition) => {
       console.log('getCurrentObservable')
       this.array_latLng.push(new LatLng(value.coords.latitude, value.coords.longitude))
+      this.drawRoutePickDeliver(this.deliveries[this.slides.getActiveIndex()])
+      // marker del usuario
       this.addUserMarker(value.coords.latitude, value.coords.longitude, 'posicion actual')
-      this.drawRouteDeliver(this.deliveries[0])
+      this.showWayRoutes({latitude: value.coords.latitude, longitude: value.coords.longitude}, this.deliveries[this.slides.getActiveIndex()]['pick'], true)
       this.fitBounds()
     })
 
@@ -89,6 +92,9 @@ export class HomePage {
   }
 
   loadMap(){
+    if (this.map) {
+      this.map.clear()
+    }
     let element = document.getElementById('map')
     this.map = this.googleMaps.create(element, {
       'controls': {
@@ -102,10 +108,13 @@ export class HomePage {
     })
   }
 
-  addMarker(lat, lng, text){
+  addMarker(lat, lng, text, icon){
     let latLng: LatLng = new LatLng(lat, lng)
     let markerOptions: MarkerOptions = {
       position: latLng,
+      icon: {
+        url: 'www/assets/images/'+icon+'.png'
+      },
       title: text
     }
 
@@ -120,11 +129,13 @@ export class HomePage {
 
     let position: CameraPosition = {
       target: latLng,
-      zoom: 17,
-      tilt: 30
+      zoom: 17
     }
     let markerOptions: MarkerOptions = {
       position: latLng,
+      icon: {
+        url: 'www/assets/images/marker_moto.png'
+      },
       title: text
     }
 
@@ -169,11 +180,30 @@ export class HomePage {
     this.array_marker.map(value => value.remove())
     console.log('remove')
     let delivery = this.deliveries[this.slides.getActiveIndex()]
-    this.drawRouteDeliver(delivery)
+    this.drawRoutePickDeliver(delivery)
+    
     this.user_marker.getPosition().then(value => {
       this.showWayRoutes({latitude:value.lat, longitude:value.lng}, delivery['pick'], true)
       this.fitBounds()
     })
+  }
+
+  drawRoutePickDeliver(delivery){
+    let pick = delivery['pick']
+    let deliver = delivery['deliver']
+    this.drawRouteDeliver(pick, deliver, 'marker_pick', 'marker_deliver')
+  }
+
+  // dibuja la ruta del pick al deliver
+  drawRouteDeliver(ori, dst, ori_icon, dst_icon){
+    this.array_latLng.push(new LatLng(ori.latitude, ori.longitude))
+    this.array_latLng.push(new LatLng(dst.latitude, dst.longitude))
+    this.fitBounds()
+    this.showWayRoutes(ori, dst, false)
+    // marker origen
+    this.addMarker(ori.latitude, ori.longitude, ori.name, ori_icon)
+    // marker destino
+    this.addMarker(dst.latitude, dst.longitude, dst.name, dst_icon)
   }
 
   fitBounds(){
@@ -185,17 +215,6 @@ export class HomePage {
       duration: 1500
     }
     this.map.animateCamera(position)
-  }
-
-  drawRouteDeliver(delivery){
-    let pick = delivery['pick']
-    let deliver = delivery['deliver']
-    this.array_latLng.push(new LatLng(deliver.latitude, deliver.longitude))
-    this.array_latLng.push(new LatLng(pick.latitude, pick.longitude))
-    this.fitBounds()
-    this.showWayRoutes(pick, deliver, false)
-    this.addMarker(deliver.latitude, deliver.longitude, deliver.name)
-    this.addMarker(pick.latitude, pick.longitude, pick.name)
   }
 
   showWayRoutes(origin, dest, is_user:boolean){

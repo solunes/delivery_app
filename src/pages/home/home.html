@@ -8,6 +8,7 @@
           <div>{{ item.pick.address }}</div>
           <div>Deliver: {{ item.deliver.name }}</div>
           <div>{{ item.deliver.address }}</div>
+          <div>{{ item.created_at | date }}</div>
         </div>
         <div class="buttons">
           <button *ngIf="status_delivery == 0" (click)="changeStatus(0)" ion-button>Aceptar</button>
