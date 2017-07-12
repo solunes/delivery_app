@@ -1,5 +1,14 @@
 page-home {
   ion-slides{
-    height: 30%;
+    height: 40%;
+  }
+  .info-deliver{
+    display: inline-block;
+    text-align: left;
+    vertical-align: top;
+  }
+  .buttons{
+    display: inline-block;
+    vertical-align: top;
   }
 }

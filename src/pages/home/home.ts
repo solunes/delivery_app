@@ -19,6 +19,8 @@ import {
 
 import { Observable, Subscription, Subject } from 'rxjs/Rx'
 
+import { InitPage } from '../../pages/init/init'
+
 import { LocationTracker } from '../../providers/location-tracker'
 import { LoadingClient } from '../../providers/loading-client'
 import { AuthService } from '../../providers/auth-service'
@@ -38,7 +40,7 @@ export class HomePage {
   array_marker = new Array<Marker>()
   array_latLng = new Array<LatLng>()
   label: number = 0
-  on_background: boolean
+  on_background: boolean = true
   deliveries: Array<JSON>
   polyline_route: Polyline
   polyline_user: Polyline
@@ -73,9 +75,7 @@ export class HomePage {
     })
 
     this.location.getDeliveres().subscribe(value => {
-      this.deliveries = value['deliveries']
-      this.slides.update()
-      this.storage.set(AppSettings.deliveries_key, value['deliveries'])
+      console.log('respuesta de update location')
     })
   }
 
@@ -155,6 +155,7 @@ export class HomePage {
   finish(){
     this.on_background = false
     this.location.stopBackgroundTracking()
+    this.navCtrl.setRoot(InitPage)
   }
 
   slideChanged(){
@@ -251,20 +252,31 @@ export class HomePage {
     return "https://maps.googleapis.com/maps/api/directions/json?" + parameters + "&mode=driving&key=AIzaSyDKr3c9K7ODEKPiXdy5d_-J4Wb1PUNulKo"
   }
 
+  has_phone: boolean
+
   changeStatus(id_status){
     this.status_delivery = id_status
     this.user_marker.getPosition().then(value => {
       this.http.getRequest(AppSettings.deliveryStatus(this.deliveries[this.slides.getActiveIndex()]['id'], this.status_array[id_status], value.lat, value.lng)).subscribe(result => {
-        console.log(JSON.stringify(result['deliveries'].length))
         this.clearArrayDeliveries(result['deliveries'])
         if (this.deliveries.length > 2) {
           this.status_delivery = 0
         } else {
           let delivery = this.deliveries[0]
           if (delivery['status'] == 'accepted') {
+            if (delivery['pick']['phone']) {
+              this.has_phone = true
+            } else {
+              this.has_phone = false
+            }
             this.status_delivery = 1
             console.log('accepted')
           } else if (delivery['status'] == 'picked') {
+            if (delivery['deliver']['phone']) {
+              this.has_phone = true
+            } else {
+              this.has_phone = false
+            }
             this.status_delivery = 2
             console.log('picked')
           } else {
@@ -299,7 +311,14 @@ export class HomePage {
   }
 
   call_number(){
-    this.callNumber.callNumber('72008625', true).then(value => {
+    let phone
+    if (this.status_delivery == 1) {
+      phone = this.deliveries[this.slides.getActiveIndex()]['deliver']['phone']
+    }
+    if (this.status_delivery == 2) {
+      phone = this.deliveries[this.slides.getActiveIndex()]['deliver']['phone']
+    }
+    this.callNumber.callNumber(phone, false).then(value => {
       console.log('llamando me')
     })
   }

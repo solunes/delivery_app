@@ -1,19 +1,23 @@
-<toolbar [title_page]='title_page'></toolbar>
-
-<ion-content padding style="margin-top: 60px;">
-  <button [disabled]="on_background" (click)="init()" ion-button>Iniciar</button>
-  <button [disabled]="!on_background" (click)="finish()" ion-button color="danger">Terminar</button>
-  <button (click)="call_number()" ion-button>LLamar</button>
-  <ion-slides pager (ionSlideDidChange)="slideChanged()">
-    <ion-slide *ngFor="let item of deliveries">
-      <h4>Pick: {{ item.pick.name }}</h4>
-      <h4>Deliver: {{ item.deliver.name }}</h4>
-      <button *ngIf="status_delivery == 0" (click)="changeStatus(0)" ion-button>Aceptar</button>
-      <button *ngIf="status_delivery == 1" (click)="changeStatus(1)" ion-button>Recogido</button>
-      <button *ngIf="status_delivery == 2" (click)="changeStatus(2)" ion-button>Entregado</button>
-      <button *ngIf="status_delivery > 0" (click)="cancelDelivery()" ion-button color="danger">Cancelado</button>
-    </ion-slide>
-  </ion-slides>
-  <div #map id="map" style="height:60%;background-color: red;"></div>
-  <div>{{ label_result }}</div>
+<ion-content>
+  <div padding>
+    <button *ngIf="on_background" [disabled]="status_delivery != 0" (click)="finish()" ion-button color="danger">Terminar</button>
+    <ion-slides (ionSlideDidChange)="slideChanged()">
+      <ion-slide *ngFor="let item of deliveries">
+        <div class="info-deliver">
+          <div>Pick: {{ item.pick.name }}</div>
+          <div>{{ item.pick.address }}</div>
+          <div>Deliver: {{ item.deliver.name }}</div>
+          <div>{{ item.deliver.address }}</div>
+        </div>
+        <div class="buttons">
+          <button *ngIf="status_delivery == 0" (click)="changeStatus(0)" ion-button>Aceptar</button>
+          <button *ngIf="status_delivery == 1" (click)="changeStatus(1)" ion-button>Recogido</button>
+          <button *ngIf="status_delivery > 0 && has_phone" (click)="call_number()" ion-button>Llamar</button>
+          <button *ngIf="status_delivery == 2" (click)="changeStatus(2)" ion-button>Entregado</button>
+          <button *ngIf="status_delivery > 0" (click)="cancelDelivery()" ion-button color="danger">Cancelado</button>
+        </div>
+      </ion-slide>
+    </ion-slides>
+  </div>
+  <div #map id="map" style="height:70%;background-color: red;"></div>
 </ion-content>

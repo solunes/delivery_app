@@ -15,6 +15,7 @@ import { ToolbarComponent } from './toolbar.component';
 
 import { HomePage } from '../pages/home/home';
 import { LoginPage } from '../pages/login/login';
+import { InitPage } from '../pages/init/init';
 
 import { LocationTracker } from '../providers/location-tracker';
 import { AppSettings } from '../providers/app-settings';
@@ -28,6 +29,7 @@ import { LoadingClient } from '../providers/loading-client';
     ToolbarComponent,
     HomePage,
     LoginPage,
+    InitPage,
   ],
   imports: [
     HttpModule,
@@ -41,6 +43,7 @@ import { LoadingClient } from '../providers/loading-client';
     ToolbarComponent,
     HomePage,
     LoginPage,
+    InitPage,
   ], 
   providers: [
     StatusBar,

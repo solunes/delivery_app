@@ -7,7 +7,7 @@ import { LoadingClient } from '../../providers/loading-client'
 import { HttpClient } from '../../providers/http-client'
 import { AppSettings } from '../../providers/app-settings'
 
-import { HomePage } from '../../pages/home/home'
+import { InitPage } from '../../pages/init/init'
 
 @Component({
   selector: 'page-login',
@@ -59,6 +59,6 @@ export class LoginPage {
     this.storage.set(AuthService.token_key, data[AuthService.token_key])
     this.storage.set(AuthService.expiration_date_key, data[AuthService.expiration_date_key])
     this.storage.set(AppSettings.deliveries_key, data[AppSettings.deliveries_key])
-    this.nav.setRoot(HomePage)
+    this.nav.setRoot(InitPage)
   }
 }

@@ -4,7 +4,7 @@ import { Storage } from '@ionic/storage'
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
-import { HomePage } from '../pages/home/home';
+import { InitPage } from '../pages/init/init';
 import { LoginPage } from '../pages/login/login';
 
 import { AppSettings } from '../providers/app-settings';
@@ -23,10 +23,8 @@ export class MyApp {
       statusBar.styleDefault();
       splashScreen.hide();
       storage.get(AuthService.login_key).then(value => {
-        console.log(value)
-        console.log('value')
         if (value) {
-          this.rootPage = HomePage
+          this.rootPage = InitPage
         } else {
           this.rootPage = LoginPage
         }

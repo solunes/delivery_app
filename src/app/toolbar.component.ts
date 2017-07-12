@@ -22,7 +22,7 @@ import { AppSettings } from '../providers/app-settings'
 
         <ion-buttons end >
           <button ion-button *ngIf="loading"><ion-spinner icon="android"></ion-spinner></button>
-          <button ion-button *ngIf="logged" (click)="logout()"><ion-icon name="log-out"></ion-icon></button>
+          <button ion-button *ngIf="logged" (click)="logout()">Logout <ion-icon name="log-out"></ion-icon></button>
         </ion-buttons>
       </ion-navbar>
   </ion-header>
