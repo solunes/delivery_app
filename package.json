@@ -27,6 +27,7 @@
     "@ionic-native/google-maps": "^3.13.0",
     "@ionic-native/splash-screen": "3.12.1",
     "@ionic-native/status-bar": "3.12.1",
+    "@ionic/cloud-angular": "^0.12.0",
     "@ionic/storage": "2.0.1",
     "@mapbox/polyline": "^0.2.0",
     "ionic-angular": "3.5.0",

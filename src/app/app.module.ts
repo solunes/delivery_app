@@ -9,6 +9,7 @@ import { GoogleMaps } from '@ionic-native/google-maps'
 import { IonicStorageModule } from '@ionic/storage';
 import { HttpModule } from '@angular/http';
 import { CallNumber } from '@ionic-native/call-number'
+import { CloudSettings, CloudModule } from '@ionic/cloud-angular'
 
 import { MyApp } from './app.component';
 import { ToolbarComponent } from './toolbar.component';
@@ -23,6 +24,24 @@ import { AuthService } from '../providers/auth-service';
 import { HttpClient } from '../providers/http-client';
 import { LoadingClient } from '../providers/loading-client';
 
+const cloudSettings: CloudSettings = {
+  'core': {
+    'app_id': '55d109a5'
+  },
+  'push': {
+    'sender_id': '680425155654',
+    'pluginConfig': {
+      'ios': {
+        'badge': true,
+        'sound': true
+      },
+      'android': {
+        'iconColor': '#ff0000'
+      }
+    }
+  }
+}
+
 @NgModule({
   declarations: [
     MyApp,
@@ -36,6 +55,7 @@ import { LoadingClient } from '../providers/loading-client';
     BrowserModule,
     IonicModule.forRoot(MyApp),
     IonicStorageModule.forRoot(),
+    CloudModule.forRoot(cloudSettings)
   ],
   bootstrap: [IonicApp],
   entryComponents: [

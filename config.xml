@@ -92,4 +92,7 @@
     </plugin>
     <plugin name="cordova-plugin-geolocation" spec="~2.4.3" />
     <plugin name="mx.ferreyra.callnumber" spec="~0.0.2" />
+    <plugin name="phonegap-plugin-push" spec="~1.10.5">
+        <variable name="SENDER_ID" value="680425155654" />
+    </plugin>
 </widget>

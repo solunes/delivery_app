@@ -92,9 +92,6 @@ export class HomePage {
   }
 
   loadMap(){
-    if (this.map) {
-      this.map.clear()
-    }
     let element = document.getElementById('map')
     this.map = this.googleMaps.create(element, {
       'controls': {
@@ -167,6 +164,9 @@ export class HomePage {
     this.on_background = false
     this.location.stopBackgroundTracking()
     this.navCtrl.setRoot(InitPage)
+    this.map.clear()
+    this.array_marker = []
+    this.array_latLng = []
   }
 
   slideChanged(){
@@ -176,12 +176,9 @@ export class HomePage {
 
     this.array_latLng = new Array<LatLng>()
     this.user_marker.getPosition().then(value => this.array_latLng.push(value))
-    console.log(this.slides.getActiveIndex())
     this.array_marker.map(value => value.remove())
-    console.log('remove')
     let delivery = this.deliveries[this.slides.getActiveIndex()]
     this.drawRoutePickDeliver(delivery)
-    
     this.user_marker.getPosition().then(value => {
       this.showWayRoutes({latitude:value.lat, longitude:value.lng}, delivery['pick'], true)
       this.fitBounds()
