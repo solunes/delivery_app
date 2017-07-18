@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, Alert } from 'ionic-angular';
 import { Storage } from '@ionic/storage'
 
 import { HomePage } from '../../pages/home/home'
@@ -7,6 +7,7 @@ import { LoginPage } from '../../pages/login/login'
 
 import { LocationTracker } from '../../providers/location-tracker'
 import { AuthService } from '../../providers/auth-service'
+import { LoadingClient } from '../../providers/loading-client'
 
 @Component({
   selector: 'page-init',
@@ -14,10 +15,12 @@ import { AuthService } from '../../providers/auth-service'
 })
 export class InitPage {
   title_page = 'Inicio'
+  confirmAlert: Alert
 
   constructor(public navCtrl: NavController, 
       private location: LocationTracker,
       private storage: Storage,
+      private alert: AlertController,
       public navParams: NavParams) {
   }
 
@@ -26,8 +29,27 @@ export class InitPage {
   }
 
   iniciar(){
-    this.navCtrl.setRoot(HomePage)
-    this.location.backgroundTracking()
+    console.log(this.confirmAlert)
+    this.confirmAlert = this.alert.create({
+      title: 'Location settings',
+      message: 'Es necesario la ubicación',
+      buttons: [{
+        text: 'Ignorar',
+        role: 'cancel'
+      }, {
+        text: 'Abrir',
+        handler: () => {
+          this.location.backgroundGeolocation.showLocationSettings()
+        }
+      }]
+    })
+    this.location.backgroundGeolocation.isLocationEnabled().then(value => {
+      if (value == 0) {
+        this.confirmAlert.present()
+      } else {
+        this.navCtrl.push(HomePage)
+      }
+    })
   }
 
   logout(){

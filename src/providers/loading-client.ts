@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
-import { ToastController, LoadingController, Loading } from 'ionic-angular';
+import { Observable } from 'rxjs/Observable';
+import { ToastController, LoadingController, Loading, AlertController } from 'ionic-angular';
 
 /*
   Generated class for the LoadingClient provider.
@@ -15,6 +16,7 @@ export class LoadingClient {
   is_present: boolean = false
 
   constructor(public http: Http, 
+    public alert: AlertController,
     public loadingCtrl: LoadingController, 
     public toastCtrl: ToastController) {}
 
@@ -61,5 +63,25 @@ export class LoadingClient {
     } else {
       this.loading_page = false
     }
+  }
+
+  dialog(title, message){
+    let confirmAlert = this.alert.create({
+      title: title,
+      message: message,
+      buttons: [{
+        text: 'Ignorar',
+        role: 'cancel',
+        handler: () => {
+          this.presentToast('Encienda la ubicación')
+        }
+      }, {
+        text: 'Abrir',
+        handler: () => {
+          // TODO: handler
+        }
+      }]
+    });
+    confirmAlert.present();
   }
 }

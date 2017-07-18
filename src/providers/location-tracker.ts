@@ -17,9 +17,9 @@ export class LocationTracker {
 
   watch: any
   stringTest: string 
-  subjectResult = new Subject<any>() 
-  subjectCurrent = new Subject<any>() 
-  subjectDeliveres = new Subject<JSON>() 
+  subjectResult: Subject<any>
+  subjectCurrent: Subject<any>
+  subjectDeliveres: Subject<JSON>
 
   constructor(public zone: NgZone,
     public geolocation: Geolocation,
@@ -30,21 +30,20 @@ export class LocationTracker {
   }
 
   getCurrentPosition(){
+    console.log('getCurrentPosition')
     let options = {
-      frequency: 5000, 
+      frequency: 1000, 
       enableHighAccuracy: true
     }
-    console.log('options')
-
     this.geolocation.getCurrentPosition().then(value => {
-      console.log('getCurrentPosition')
+      console.log('value')
+      console.log(value)
       this.subjectCurrent.next(value)
+      this.subjectCurrent.complete()
     })
   }
 
   backgroundTracking(interval=15000, user_id=1, uuid='') {
-    console.log('BackgroundGeolocation: ')
-    
     let config = {
       desiredAccuracy: 0,
       stationaryRadius: 5,
@@ -60,7 +59,6 @@ export class LocationTracker {
     this.backgroundGeolocation.configure(config).subscribe((location) => {
       this.sendPosition(location.latitude, location.longitude,location.accuracy)
       this.subjectResult.next(location)
-      console.log('next')
     }, (err) => console.log(err))
     
     this.backgroundGeolocation.start()
@@ -69,27 +67,33 @@ export class LocationTracker {
   sendPosition(lat, lng, acy){
     let endpoint = AppSettings.updateLocation(lat, lng, acy)
     this.http.getRequest(endpoint).subscribe(result => {
-      console.log('result')
-      console.log(JSON.stringify(result))
       this.subjectDeliveres.next(result)
     }, error => this.loading.showError(error))
   }
 
   getResult(): Observable<any>{
+    this.subjectResult = new Subject<any>()
     return this.subjectResult.asObservable()
   }
 
   getCurrentObservable(): Observable<any>{
+    this.subjectCurrent = new Subject<any>()
     return this.subjectCurrent.asObservable()
   }
 
   getDeliveres(): Observable<any>{
+    this.subjectDeliveres = new Subject<JSON>()
     return this.subjectDeliveres.asObservable()
   }
 
   stopBackgroundTracking() {
     console.log('stopBackgroundTracking')
-    this.backgroundGeolocation.finish()
-    this.backgroundGeolocation.stop()
+    try {
+      this.backgroundGeolocation.finish()
+      this.backgroundGeolocation.stop()
+    } catch (ex){
+    } 
+    this.subjectResult.complete()
+    this.subjectDeliveres.complete()
   }
 }

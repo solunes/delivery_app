@@ -9,6 +9,7 @@ import { GoogleMaps } from '@ionic-native/google-maps'
 import { IonicStorageModule } from '@ionic/storage';
 import { HttpModule } from '@angular/http';
 import { CallNumber } from '@ionic-native/call-number'
+import { Diagnostic } from '@ionic-native/diagnostic';
 import { CloudSettings, CloudModule } from '@ionic/cloud-angular'
 
 import { MyApp } from './app.component';
@@ -74,6 +75,7 @@ const cloudSettings: CloudSettings = {
     AppSettings,
     CallNumber,
     AuthService,
+    Diagnostic,
     HttpClient,
     LoadingClient,
     SplashScreen,
