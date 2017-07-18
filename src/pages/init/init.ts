@@ -26,8 +26,8 @@ export class InitPage {
   }
 
   iniciar(){
-    this.location.backgroundTracking()
     this.navCtrl.setRoot(HomePage)
+    this.location.backgroundTracking()
   }
 
   logout(){

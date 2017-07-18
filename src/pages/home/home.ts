@@ -61,10 +61,15 @@ export class HomePage {
     })
 
     this.location.getResult().subscribe(data => {
-      this.loading.dismiss()
+      console.log('get background result')
       // marker del usuario
-      this.addUserMarker(data.latitude, data.longitude, 'posicion actual')
-      this.showWayRoutes(data, this.deliveries[this.slides.getActiveIndex()], true)
+      setTimeout(() => {
+        this.addUserMarker(data.latitude, data.longitude, 'posicion actual')
+        console.log('deliver destiny')
+        console.log(this.slides.getActiveIndex())
+        console.log(this.deliveries[this.slides.getActiveIndex()])
+        this.userWayRoute(new LatLng(data.latitude, data.longitude))
+      },500)
     })
 
     this.location.getCurrentObservable().subscribe((value:Geoposition) => {
@@ -73,7 +78,7 @@ export class HomePage {
       this.drawRoutePickDeliver(this.deliveries[this.slides.getActiveIndex()])
       // marker del usuario
       this.addUserMarker(value.coords.latitude, value.coords.longitude, 'posicion actual')
-      this.showWayRoutes({latitude: value.coords.latitude, longitude: value.coords.longitude}, this.deliveries[this.slides.getActiveIndex()]['pick'], true)
+      this.userWayRoute(new LatLng(value.coords.latitude,value.coords.longitude))
       this.fitBounds()
     })
 
@@ -101,6 +106,9 @@ export class HomePage {
 
     this.map.one(GoogleMapsEvent.MAP_READY).then(() => {
       console.log('Map is ready!')
+      this.storage.get(AppSettings.deliveries_key).then(value => {
+        this.deliveries = value
+      })
       this.location.getCurrentPosition()
     })
   }
@@ -142,7 +150,7 @@ export class HomePage {
           this.user_marker = marker
           this.user_marker.showInfoWindow()
           this.user_marker.getPosition().then(value => {
-            this.showWayRoutes({latitude:value.lat, longitude:value.lng}, this.deliveries[0]['pick'], true)
+            this.userWayRoute(new LatLng(value.lat, value.lng))
             this.array_latLng.push(value)
           })
         })
@@ -180,9 +188,17 @@ export class HomePage {
     let delivery = this.deliveries[this.slides.getActiveIndex()]
     this.drawRoutePickDeliver(delivery)
     this.user_marker.getPosition().then(value => {
-      this.showWayRoutes({latitude:value.lat, longitude:value.lng}, delivery['pick'], true)
+      this.userWayRoute(new LatLng(value.lat, value.lng))
       this.fitBounds()
     })
+  }
+
+  userWayRoute(data: LatLng){
+    let dest = this.deliveries[this.slides.getActiveIndex()]['pick']
+    if (this.status_delivery == 2) {
+      dest = this.deliveries[this.slides.getActiveIndex()]['deliver']
+    }
+    this.showWayRoutes(data, new LatLng(dest['latitude'], dest['longitude']) , true)
   }
 
   drawRoutePickDeliver(delivery){
@@ -195,8 +211,8 @@ export class HomePage {
   drawRouteDeliver(ori, dst, ori_icon, dst_icon){
     this.array_latLng.push(new LatLng(ori.latitude, ori.longitude))
     this.array_latLng.push(new LatLng(dst.latitude, dst.longitude))
+    this.showWayRoutes(new LatLng(ori.latitude, ori.longitude), new LatLng(dst.latitude, dst.longitude), false)
     this.fitBounds()
-    this.showWayRoutes(ori, dst, false)
     // marker origen
     this.addMarker(ori.latitude, ori.longitude, ori.name, ori_icon)
     // marker destino
@@ -206,15 +222,24 @@ export class HomePage {
   fitBounds(){
     let bounds = new LatLngBounds(this.array_latLng)
     this.map.setCenter(bounds.getCenter())
+    let element = document.getElementById('map')
+    console.log(element.clientWidth)
+    console.log(element.clientHeight)
+    let zoom = this.getBoundsZoomLevel(bounds, element.clientWidth, element.clientHeight)
+    console.log(zoom)
     let position: AnimateCameraOptions = {
       target: bounds.getCenter(),
-      zoom: 14,
+      zoom: zoom,
       duration: 1500
     }
     this.map.animateCamera(position)
   }
 
-  showWayRoutes(origin, dest, is_user:boolean){
+  // consulta a google por las rutas
+  showWayRoutes(origin:LatLng, dest:LatLng, is_user:boolean){
+    console.log('showWayRoutes')
+    console.log(JSON.stringify(dest))
+    console.log(is_user)
     let urlRequestWays = this.setDirections(origin, dest)
     console.log(urlRequestWays)
     this.http.getGoogleRequest(urlRequestWays).subscribe(result => {
@@ -223,8 +248,10 @@ export class HomePage {
     }, error => console.log(error))
   }
 
+  // dibuja rutas
   drawRoutes(result: JSON, is_user:boolean){
     console.log('init draw routes')
+    console.log(is_user)
     let routes:Array<JSON> = result['routes']
     let more_points = Poly.decode(routes.shift()['overview_polyline']['points'])
 
@@ -235,12 +262,12 @@ export class HomePage {
     }
     let color
     if (is_user) {
-      color = 'blue'
+      color = 'red'
       if (this.polyline_user) {
         this.polyline_user.remove()
       }
     } else {
-      color = 'red'
+      color = 'blue'
       if (this.polyline_route) {
         this.polyline_route.remove()
       }
@@ -260,9 +287,9 @@ export class HomePage {
     console.log('end draw routes')
   }
 
-  setDirections(origin, dest): string{
-    let str_origin = "origin=" + origin.latitude + "," + origin.longitude
-    let str_dest = "destination=" + dest.latitude + "," + dest.longitude
+  setDirections(origin:LatLng, dest:LatLng): string{
+    let str_origin = "origin=" + origin.lat + "," + origin.lng
+    let str_dest = "destination=" + dest.lat + "," + dest.lng
     let sensor = "sensor=false"
     let parameters = str_origin + "&" + str_dest + "&" + sensor
     return "https://maps.googleapis.com/maps/api/directions/json?" + parameters + "&mode=driving&key=AIzaSyDKr3c9K7ODEKPiXdy5d_-J4Wb1PUNulKo"
@@ -337,6 +364,49 @@ export class HomePage {
     this.callNumber.callNumber(phone, false).then(value => {
       console.log('llamando me')
     })
+
+  }
+
+  static LN2 = 0.6931471805599453;
+  static WORLD_PX_HEIGHT = 256;
+  static WORLD_PX_WIDTH = 256;
+  static ZOOM_MAX = 21;
+
+  getBoundsZoomLevel(bounds: LatLngBounds, mapWidthPx, mapHeightPx){
+    let ne = bounds.northeast;
+    let sw = bounds.southwest;
+
+    let latFraction = (this.latRad(ne.lat) - this.latRad(sw.lat)) / Math.PI;
+    // console.log('latFraction')
+    // console.log(latFraction)
+
+    let lngDiff = ne.lng - sw.lng;
+    let lngFraction = ((lngDiff < 0) ? (lngDiff + 360) : lngDiff) / 360;
+
+
+    let latZoom = this.zoom(mapHeightPx, HomePage.WORLD_PX_HEIGHT, latFraction);
+    // console.log('latZoom')
+    // console.log(latZoom)
+    let lngZoom = this.zoom(mapWidthPx, HomePage.WORLD_PX_WIDTH, lngFraction);
+    // console.log('lngZoom')
+    // console.log(lngZoom)
+
+    let result = Math.min(latZoom, lngZoom);
+    // console.log('result')
+    // console.log(result)
+    // console.log('end')
+    // console.log(Math.min(result, HomePage.ZOOM_MAX))
+    
+    return Math.min(result, HomePage.ZOOM_MAX);
+  }
+
+  latRad(lat) {
+    let sin = Math.sin(lat * Math.PI / 180);
+    let radX2 = Math.log((1 + sin) / (1 - sin)) / 2;
+    return Math.max(Math.min(radX2, Math.PI), -Math.PI) / 2;
+  }
+  zoom(mapPx, worldPx, fraction) {
+      return Math.floor(Math.log(mapPx / worldPx / fraction) / HomePage.LN2);
   }
 }
 
